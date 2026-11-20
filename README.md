@@ -1,2 +1,27 @@
-# new-repository
-Repository created by GitHub Copilot
+**Reading a "dead" DJI RS 2 BG30 battery grip with a Raspberry Pi Pico (read-only)**
+
+My DJI RS 2 Pro's BG30 battery grip stopped charging after being left flat. I opened it up to see whether the battery chip had locked itself.
+
+**What's inside:** a 4S Li-ion pack (15.4 V nominal) and a TI BQ40Z307 fuel gauge chip, firmware 1.01. The top connector has 6 pins, including P+, P-, SCL and SDA. The chip talks SMBus at address `0x0B`.
+
+**What I used:**
+
+- A Raspberry Pi Pico 2 W running the Arduino Pico core
+- Three wires: battery P- to Pico GND, SDA to GP4, SCL to GP5
+- The Pico's built-in pull-ups at 10 kHz, so no resistors were needed
+- **P+ not connected to anything.** It carries pack voltage and will kill the Pico.
+
+**Tip:** the chip only answered while USB-C was plugged into the grip. With no charger attached, it stayed asleep.
+
+**What it showed on mine:**
+
+- Pack at 5.15 V, with the cells at 1.32 V, 1.34 V, 1.29 V and 1.19 V
+- Safety status and permanent-failure status both clear, so the chip **wasn't locked**
+- Sealed, which is its normal mode
+- Battery status showing the "fully discharged" and "stop charging/discharging" alarms
+
+So the chip wasn't bricked. It was refusing to charge because every cell was far below the safe minimum of about 2.5 V. No unlocking will fix that. The only options are a very careful per-cell recovery charge or a new grip.
+
+**Safety:** Li-ion cells left this low can develop internal shorts. If you try to recover them, charge one cell at a time at about 100 mA or less, outdoors on a non-flammable surface, and never leave them unattended. Then do a 24-hour hold test, and scrap any cell that loses voltage.
+
+The sketch is below. It only reads and never writes to the battery. It prints a plain-English report: identity, voltages, capacity and health, and status flags with their meaning. Use it at your own risk.
