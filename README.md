@@ -7,7 +7,11 @@ My DJI RS 2 Pro's BG30 battery grip stopped charging after being left flat. I op
 **What I used:**
 
 - A Raspberry Pi Pico 2 W running the Arduino Pico core
-- Three wires: battery P- to Pico GND, SDA to GP4, SCL to GP5
+- Three wires - see attached pin out diagram
+- battery P- to Pico GND - BLACK
+- SDA to GP4 - YELLOW
+- SCL to GP5 - BLUE
+
 - The Pico's built-in pull-ups at 10 kHz, so no resistors were needed
 - **P+ not connected to anything.** It carries pack voltage and will kill the Pico.
 
